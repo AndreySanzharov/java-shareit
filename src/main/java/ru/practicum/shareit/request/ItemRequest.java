@@ -1,7 +1,7 @@
 package ru.practicum.shareit.request;
 
 /**
- * TODO Sprint add-item-requests.
+ * TODO Sprint create-item-requests.
  */
 public class ItemRequest {
 }

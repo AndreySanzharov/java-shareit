@@ -4,14 +4,16 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.SameUsersEmailExistsException;
-import ru.practicum.shareit.exceptions.UserDtoException;
+import ru.practicum.shareit.exceptions.SameParametersExistsException;
+import ru.practicum.shareit.exceptions.ObjectDtoException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService {
                     .anyMatch(userDto.getEmail()::equals);
 
             if (emailExists) {
-                throw new SameUsersEmailExistsException("Пользователь с таким email уже существует");
+                throw new SameParametersExistsException("Пользователь с таким email уже существует");
             }
 
             users.get(userId).setEmail(userDto.getEmail());
@@ -60,6 +62,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> getAll() {
+        return users.values().stream().map(userMapper::toUserDto).collect(Collectors.toList());
+    }
+
+    @Override
     public void delete(int id) {
         validateUserById(id);
         users.remove(id);
@@ -67,11 +74,11 @@ public class UserServiceImpl implements UserService {
 
     private void validateUserDto(UserDto userDto) {
         if (userDto.getEmail() == null || userDto.getName() == null) {
-            throw new UserDtoException("Почта и имя пользователя не должны быть пустыми");
+            throw new ObjectDtoException("id ,почта, имя пользователя не должны быть пустыми");
         }
         boolean emailExists = users.values().stream().map(User::getEmail).anyMatch(userDto.getEmail()::equals);
         if (emailExists) {
-            throw new SameUsersEmailExistsException("Пользователь с таким email уже существует");
+            throw new SameParametersExistsException("Пользователь с таким email уже существует");
         }
     }
 
