@@ -55,12 +55,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto get(int id) {
-        return null;
+        validateUserById(id);
+        return userMapper.toUserDto(users.get(id));
     }
 
     @Override
     public void delete(int id) {
-
+        validateUserById(id);
+        users.remove(id);
     }
 
     private void validateUserDto(UserDto userDto) {

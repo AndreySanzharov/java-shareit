@@ -13,14 +13,24 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/{id}")
+    public UserDto getUserById(@PathVariable int id) {
+        return userService.get(id);
+    }
+
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto){
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
         return userService.add(userDto);
     }
 
     @PatchMapping("/{id}")
     public UserDto update(@PathVariable int id, @Valid @RequestBody UserDto userDto) {
         return userService.update(id, userDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable int id) {
+        userService.delete(id);
     }
 
 }
