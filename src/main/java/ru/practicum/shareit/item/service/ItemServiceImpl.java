@@ -42,7 +42,23 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto update(Integer itemId, Integer userId, ItemDto itemDto) {
-        return null;
+        if (!userWithIdExists(userId)) {
+            throw new NotFoundException("Пользователь с id " + userId + " не найден");
+        }
+        Item item = items.get(itemId);
+
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
+        }
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
+        }
+        if (itemDto.getAvailable() != null) {
+            item.setAvailable(itemDto.getAvailable());
+        }
+
+        items.put(item.getId(), item);
+        return itemMapper.toItemDto(items.get(itemId));
     }
 
     @Override
@@ -68,6 +84,10 @@ public class ItemServiceImpl implements ItemService {
 
     private boolean userWithIdExists(Integer userId) {
         return userService.getAll().stream().anyMatch(userDto -> userDto.getId().equals(userId));
+    }
+
+    private boolean itemWithIdExists(Integer itemId) {
+        return items.values().stream().anyMatch(item -> item.getId().equals(itemId));
     }
 
 }

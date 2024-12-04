@@ -19,4 +19,9 @@ public class ItemController {
         return itemService.create(userId, itemDto);
     }
 
+    @PatchMapping("/{itemId}")
+    public ItemDto update(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer userId, @RequestBody ItemDto itemDto) {
+        return itemService.update(itemId, userId, itemDto);
+    }
+
 }
