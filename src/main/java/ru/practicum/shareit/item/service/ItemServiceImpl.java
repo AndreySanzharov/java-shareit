@@ -10,9 +10,12 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -37,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
         item.setOwner(userMapper.fromUserDto(userService.get(userId)));
         item.setId(++totalId);
         items.put(item.getId(), item);
-        return ItemMapper.toItemDto(item);
+        return itemMapper.toItemDto(item);
     }
 
     @Override
@@ -63,17 +66,31 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto get(Integer itemId) {
-        return null;
+        if (!itemWithIdExists(itemId)) {
+            throw new NotFoundException("Предмет с id " + itemId + " не найден");
+        }
+
+        return itemMapper.toItemDto(items.get(itemId));
     }
 
     @Override
     public List<ItemDto> getAll(Integer userId) {
-        return List.of();
+        List<Item> userItems = items.values().stream().filter(item -> Objects.equals(item.getOwner().getId(), userId)).collect(Collectors.toList());
+        return userItems.stream().map(itemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
     public List<ItemDto> search(Integer userId, String text) {
-        return List.of();
+        if (text == null || text.isEmpty()) {
+            return new ArrayList<>();
+        }
+        String request = text.toLowerCase();
+        return items.values().stream()
+                .filter(Item::getAvailable)
+                .filter(item -> item.getName().toLowerCase().contains(request)
+                        || item.getDescription().toLowerCase().contains(request))
+                .map(itemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     private void validateItemDto(ItemDto itemDto) {

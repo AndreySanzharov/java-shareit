@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.model;
 
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
@@ -13,8 +12,9 @@ public class Item {
     private Integer id;
     private String name;
     private String description;
-    private boolean available;
+    private Boolean available;
     @NotNull
     private User owner;
     private ItemRequest request;
+
 }
