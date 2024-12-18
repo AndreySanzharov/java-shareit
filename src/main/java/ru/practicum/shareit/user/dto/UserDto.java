@@ -7,10 +7,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserDto {
+public final class UserDto {
     @PositiveOrZero
-    private Integer id;
-    private String name;
+    private final Integer id;
+    private final String name;
     @Email
-    private String email;
+    private final String email;
 }

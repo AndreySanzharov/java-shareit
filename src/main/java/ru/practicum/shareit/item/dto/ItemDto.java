@@ -7,10 +7,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ItemDto {
+public final class ItemDto {
     @NotNull
-    private Integer id;
-    private String name;
-    private String description;
-    private Boolean available;
+    private final Integer id;
+    private final String name;
+    private final String description;
+    private final Boolean available;
 }
