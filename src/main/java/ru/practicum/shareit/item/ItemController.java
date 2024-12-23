@@ -1,10 +1,13 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoExtended;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -26,14 +29,15 @@ public class ItemController {
         return itemService.update(itemId, userId, itemDto);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto get(@PathVariable Integer id) {
-        return itemService.get(id);
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemDto> get(@PathVariable @NotNull @Positive Integer itemId,
+                                       @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
+        return ResponseEntity.ok().body(itemService.get(itemId, userId));
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId) {
-        return itemService.getAll(userId);
+    public ResponseEntity<List<ItemDtoExtended>> getAll(@RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
+        return ResponseEntity.ok().body(itemService.getAll(userId));
     }
 
     @GetMapping("/search")
