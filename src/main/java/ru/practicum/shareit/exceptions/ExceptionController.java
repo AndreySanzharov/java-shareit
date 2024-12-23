@@ -13,7 +13,7 @@ public class ExceptionController {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public Map<String, String> NotFoundException(NotFoundException exception) {
+    public Map<String, String> notFoundException(NotFoundException exception) {
         return Map.of("error", exception.getMessage());
     }
 
