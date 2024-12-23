@@ -11,7 +11,6 @@ import org.hibernate.validator.constraints.Length;
 import ru.practicum.shareit.user.model.User;
 
 
-
 @Entity
 @Table(name = "items")
 @Data
