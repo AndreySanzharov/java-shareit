@@ -4,16 +4,15 @@ package ru.practicum.shareit.user.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.SameParametersExistsException;
-import ru.practicum.shareit.exceptions.ObjectDtoException;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.SameParametersExistsException;
+import ru.practicum.shareit.exception.ObjectDtoException;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,12 +54,6 @@ public class UserServiceImpl implements UserService {
         validateUserById(id);
         Optional<User> user = userRepository.findById(id);
         return user.map(userMapper::toUserDto).orElse(null);
-    }
-
-    @Override
-    public List<UserDto> getAll() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(userMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override

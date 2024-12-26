@@ -20,15 +20,8 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class User {
     @Id
-    @Positive
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @NotNull
     private String name;
-
-    @Column(name = "email", length = 50, nullable = false, unique = true)
-    @NotNull
-    @Email
     private String email;
 }

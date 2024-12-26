@@ -12,7 +12,5 @@ public interface UserService {
 
     UserDto get(int id);
 
-    List<UserDto> getAll();
-
     void delete(int id);
 }
