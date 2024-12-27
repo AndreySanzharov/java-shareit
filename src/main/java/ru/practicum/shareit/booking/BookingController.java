@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +20,12 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoOutput add(@RequestHeader("X-Sharer-User-Id") @NotNull Integer userId,
-                                                @RequestBody BookingDtoInput bookingDtoInput) {
+                                               @Valid @RequestBody BookingDtoInput bookingDtoInput) {
         return bookingService.add(userId, bookingDtoInput);
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDtoOutput setApprove(@PathVariable Integer bookingId,
+    public BookingDtoOutput setApprove(@PathVariable @NotNull Integer bookingId,
                                                        @RequestHeader("X-Sharer-User-Id") @NotNull Integer ownerId,
                                                        @RequestParam("approved") @NotNull Boolean isApproved) {
         return bookingService.setApprove(bookingId, ownerId, isApproved);

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,23 +30,23 @@ public class ItemController {
     private ItemService itemService;
 
     @PostMapping
-    public ItemDto add(@RequestHeader("X-Sharer-User-Id") @NotNull Integer userId, @RequestBody ItemDto itemDto) {
+    public ItemDto add(@RequestHeader("X-Sharer-User-Id") @NotNull Integer userId, @Valid @RequestBody ItemDto itemDto) {
         return itemService.add(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer userId, @RequestBody ItemDto itemDto) {
+    public ItemDto update(@PathVariable @Positive Integer itemId, @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId, @Valid @RequestBody ItemDto itemDto) {
         return itemService.update(itemId, userId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto get(@PathVariable Integer itemId,
+    public ItemDto get(@PathVariable @NotNull @Positive Integer itemId,
                        @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
         return itemService.get(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDtoExtended> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public List<ItemDtoExtended> getAll(@RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
         return itemService.getAll(userId);
     }
 
