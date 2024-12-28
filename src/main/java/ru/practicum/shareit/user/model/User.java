@@ -21,14 +21,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull(message = "Name can't be null.")
-    @NotEmpty(message = "Name can't be empty.")
+    @NotNull
+    @NotEmpty
     @Length(max = 255)
     private String name;
 
     @Column(name = "email", length = 50, nullable = false, unique = true)
-    @NotNull(message = "User email can't be null.")
-    @NotEmpty(message = "User email can't be empty.")
+    @NotNull
+    @NotEmpty
     @Email
     @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Incorrect email format.")
     private String email;
