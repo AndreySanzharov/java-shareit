@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.SameParametersExistsException;
-import ru.practicum.shareit.exception.ObjectDtoException;
+import ru.practicum.shareit.exception.ValidationDtoException;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     private void validateUserDto(UserDto userDto) {
         if (userDto.getName() == null || userDto.getEmail() == null) {
-            throw new ObjectDtoException("Имя и почта не должны быть пустыми.");
+            throw new ValidationDtoException("Имя и почта не должны быть пустыми.");
         }
     }
 
@@ -75,6 +75,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean userWithEmailExists(String email) {
-        return userRepository.findAll().stream().map(User::getEmail).anyMatch(email::equals);
+        return userRepository.existsByEmail(email);
     }
 }

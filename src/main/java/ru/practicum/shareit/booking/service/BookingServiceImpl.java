@@ -171,28 +171,36 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime dateTime = LocalDateTime.now();
 
-        switch (bookingSearchMode) {
-            case "ALL":
+        BookingSearchMode searchMode;
+
+        try {
+            searchMode = BookingSearchMode.valueOf(bookingSearchMode.toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalSearchModeException("Неизвестный параметр " + bookingSearchMode);
+        }
+
+        switch (searchMode) {
+            case ALL:
                 return bookingRepository.findByItemOwnerId(userId, sort).stream()
                         .map(bookingMapper::toBookingDtoOutput)
                         .collect(Collectors.toList());
-            case "CURRENT":
+            case CURRENT:
                 return bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId, currentDateTime, dateTime, sort).stream()
                         .map(bookingMapper::toBookingDtoOutput)
                         .collect(Collectors.toList());
-            case "PAST":
+            case PAST:
                 return bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, currentDateTime, sort).stream()
                         .map(bookingMapper::toBookingDtoOutput)
                         .collect(Collectors.toList());
-            case "FUTURE":
+            case FUTURE:
                 return bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, currentDateTime, sort).stream()
                         .map(bookingMapper::toBookingDtoOutput)
                         .collect(Collectors.toList());
-            case "WAITING":
+            case WAITING:
                 return bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.WAITING, sort).stream()
                         .map(bookingMapper::toBookingDtoOutput)
                         .collect(Collectors.toList());
-            case "REJECTED":
+            case REJECTED:
                 return bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.REJECTED, sort).stream()
                         .map(bookingMapper::toBookingDtoOutput)
                         .collect(Collectors.toList());
@@ -208,7 +216,7 @@ public class BookingServiceImpl implements BookingService {
                 || bookingDtoInput.getEnd().isBefore(bookingDtoInput.getStart())
                 || bookingDtoInput.getStart().equals(bookingDtoInput.getEnd())
         ) {
-            throw new ObjectDtoException("Идентификатор клиента, товара, " +
+            throw new ValidationDtoException("Идентификатор клиента, товара, " +
                     "время начала и окончания не должны быть пустыми");
         }
     }

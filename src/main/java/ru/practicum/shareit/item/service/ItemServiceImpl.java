@@ -10,7 +10,7 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.IllegalItemBookingException;
 import ru.practicum.shareit.exception.ItemAccessException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ObjectDtoException;
+import ru.practicum.shareit.exception.ValidationDtoException;
 import ru.practicum.shareit.exception.UnavailableItemBookingException;
 import ru.practicum.shareit.item.dto.CommentOutputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -199,7 +199,7 @@ public class ItemServiceImpl implements ItemService {
 
     private void validateItemDto(ItemDto itemDto) {
         if (itemDto.getAvailable() == null || itemDto.getName() == null || itemDto.getName().isEmpty() || itemDto.getDescription() == null) {
-            throw new ObjectDtoException("Доступность, название, описание предмета не должны быть пустыми.");
+            throw new ValidationDtoException("Доступность, название, описание предмета не должны быть пустыми.");
         }
     }
 
