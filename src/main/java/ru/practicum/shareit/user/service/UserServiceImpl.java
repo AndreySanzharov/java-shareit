@@ -1,90 +1,80 @@
 package ru.practicum.shareit.user.service;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.SameParametersExistsException;
-import ru.practicum.shareit.exceptions.ObjectDtoException;
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.SameParametersExistsException;
+import ru.practicum.shareit.exception.ValidationDtoException;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private Map<Integer, User> users = new HashMap<>();
-    private int totalId = 0;
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
-    public UserDto add(UserDto userDto) {
+    public UserDto add(@Valid UserDto userDto) {
         validateUserDto(userDto);
         User user = userMapper.fromUserDto(userDto);
-        user.setId(++totalId);
-        users.put(user.getId(), user);
-        System.out.println(users);
+        user = userRepository.save(user);
         return userMapper.toUserDto(user);
     }
 
     @Override
     public UserDto update(int userId, UserDto userDto) {
-
         validateUserById(userId);
+
+        User user = userRepository.findById(userId).get();
+
         if (userDto.getEmail() != null) {
-            boolean emailExists = users.values().stream()
-                    .filter(user -> user.getId() != userId)
-                    .map(User::getEmail)
-                    .anyMatch(userDto.getEmail()::equals);
-
-            if (emailExists) {
-                throw new SameParametersExistsException("Пользователь с таким email уже существует");
+            if (!Objects.equals(userDto.getEmail(), user.getEmail()) && userWithEmailExists(userDto.getEmail())) {
+                throw new SameParametersExistsException("Пользователя с почтой " + userDto.getEmail() + " не существует.");
             }
-
-            users.get(userId).setEmail(userDto.getEmail());
+            user.setEmail(userDto.getEmail());
         }
 
         if (userDto.getName() != null) {
-            users.get(userId).setName(userDto.getName());
+            user.setName(userDto.getName());
         }
 
-        return userMapper.toUserDto((users.get(userId)));
+        user = userRepository.save(user);
+
+        return userMapper.toUserDto(user);
     }
 
     @Override
     public UserDto get(int id) {
         validateUserById(id);
-        return userMapper.toUserDto(users.get(id));
-    }
-
-    @Override
-    public List<UserDto> getAll() {
-        return users.values().stream().map(userMapper::toUserDto).collect(Collectors.toList());
+        Optional<User> user = userRepository.findById(id);
+        return user.map(userMapper::toUserDto).orElse(null);
     }
 
     @Override
     public void delete(int id) {
         validateUserById(id);
-        users.remove(id);
+        userRepository.deleteById(id);
     }
 
     private void validateUserDto(UserDto userDto) {
-        if (userDto.getEmail() == null || userDto.getName() == null) {
-            throw new ObjectDtoException("id ,почта, имя пользователя не должны быть пустыми");
-        }
-        boolean emailExists = users.values().stream().map(User::getEmail).anyMatch(userDto.getEmail()::equals);
-        if (emailExists) {
-            throw new SameParametersExistsException("Пользователь с таким email уже существует");
+        if (userDto.getName() == null || userDto.getEmail() == null) {
+            throw new ValidationDtoException("Имя и почта не должны быть пустыми.");
         }
     }
 
     private void validateUserById(Integer userId) {
-        if (!users.containsKey(userId)) {
-            throw new NotFoundException("Пользователя с указанным id не существует");
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Пользователя с id = " + userId + " не существует.");
         }
+    }
+
+    private boolean userWithEmailExists(String email) {
+        return userRepository.existsByEmail(email);
     }
 }

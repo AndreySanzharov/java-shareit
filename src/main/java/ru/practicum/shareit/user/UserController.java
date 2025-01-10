@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -14,7 +15,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable int id) {
+    public UserDto getUserById(@PathVariable @Positive int id) {
         return userService.get(id);
     }
 
@@ -24,13 +25,12 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable int id, @Valid @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable @Positive int id, @Valid @RequestBody UserDto userDto) {
         return userService.update(id, userDto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable @Positive int id) {
         userService.delete(id);
     }
-
 }
