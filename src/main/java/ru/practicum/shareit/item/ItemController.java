@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.CommentOutputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoExtended;
+import ru.practicum.shareit.item.dto.ItemDtoWithRequestId;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -30,7 +31,8 @@ public class ItemController {
     private ItemService itemService;
 
     @PostMapping
-    public ItemDto add(@RequestHeader("X-Sharer-User-Id") @NotNull Integer userId, @Valid @RequestBody ItemDto itemDto) {
+    public ItemDtoWithRequestId add(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                    @RequestBody ItemDtoWithRequestId itemDto) {
         return itemService.add(userId, itemDto);
     }
 
@@ -60,11 +62,5 @@ public class ItemController {
                                        @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId,
                                        @Valid @RequestBody Comment comment) {
         return itemService.addComment(itemId, userId, comment);
-    }
-
-    @GetMapping("/{itemId}/comment")
-    public ItemDtoExtended getItemWithComments(@PathVariable @NotNull Integer itemId,
-                                               @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
-        return itemService.getItemWithComments(itemId, userId);
     }
 }

@@ -15,14 +15,15 @@ import ru.practicum.shareit.exception.UnavailableItemBookingException;
 import ru.practicum.shareit.item.dto.CommentOutputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoExtended;
+import ru.practicum.shareit.item.dto.ItemDtoWithRequestId;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,24 +36,32 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final UserService userService;
-    private final CommentMapper commentMapper;
-    private final ItemMapper itemMapper;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
+    private final RequestRepository requestRepository;
     private final BookingMapper bookingMapper;
+    private final CommentMapper commentMapper;
+    private final ItemMapper itemMapper;
 
     @Override
-    public ItemDto add(Integer userId, ItemDto itemDto) {
-        validateItemDto(itemDto);
+    public ItemDtoWithRequestId add(Integer userId, ItemDtoWithRequestId itemDtoWithRequestId) {
+        validateItemDto(itemDtoWithRequestId);
         validateUser(userId);
 
-        Item item = itemMapper.toItem(itemDto);
+        Item item = itemMapper.toItem(itemDtoWithRequestId);
+
+        if (itemDtoWithRequestId.getRequestId() != null) {
+            item.setRequest(requestRepository.findById(itemDtoWithRequestId.getRequestId()).get());
+        }
+
         item.setOwner(userRepository.findById(userId).get());
         item = itemRepository.save(item);
-        return itemMapper.toItemDto(item);
+
+        ItemDtoWithRequestId itemDtoOutput = itemMapper.toItemDtoWithRequestId(item);
+        itemDtoOutput.setRequestId(itemDtoWithRequestId.getRequestId());
+        return itemDtoOutput;
     }
 
     @Override
@@ -184,24 +193,20 @@ public class ItemServiceImpl implements ItemService {
         return commentMapper.toCommentOutputDto(comment);
     }
 
-    @Override
-    public ItemDtoExtended getItemWithComments(Integer itemId, Integer userId) {
-        validateUser(userId);
-        validateItem(itemId);
 
-        ItemDto itemDto = get(itemId, userId);
-
-        List<CommentOutputDto> itemComments = commentRepository.findByItemId(itemId).stream()
-                .map(commentMapper::toCommentOutputDto).collect(Collectors.toList());
-
-        return new ItemDtoExtended(itemDto, itemComments);
-    }
-
-    private void validateItemDto(ItemDto itemDto) {
-        if (itemDto.getAvailable() == null || itemDto.getName() == null || itemDto.getName().isEmpty() || itemDto.getDescription() == null) {
-            throw new ValidationDtoException("Доступность, название, описание предмета не должны быть пустыми.");
+    private void validateItemDto(ItemDtoWithRequestId itemDtoWithRequestId) {
+        if (itemDtoWithRequestId.getAvailable() == null || itemDtoWithRequestId.getName() == null || itemDtoWithRequestId.getName().isEmpty()
+                || itemDtoWithRequestId.getDescription() == null) {
+            throw new ValidationDtoException("Имя, описание и статус не должны быть пустыми.");
+        }
+        if (itemDtoWithRequestId.getRequestId() != null) {
+            if (!requestRepository.existsById(itemDtoWithRequestId.getRequestId())) {
+                throw new NotFoundException("Запрос с id "
+                        + itemDtoWithRequestId.getRequestId() + " не существует.");
+            }
         }
     }
+
 
     private void validateUser(Integer userId) {
         if (!userRepository.existsById(userId)) {
