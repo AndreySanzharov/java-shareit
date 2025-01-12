@@ -2,22 +2,19 @@ package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationDtoException;
 import ru.practicum.shareit.item.dto.ItemDtoWithRequestId;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.request.dto.RequestDtoInput;
 import ru.practicum.shareit.request.dto.RequestDtoOutput;
 import ru.practicum.shareit.request.dto.RequestDtoShortOutput;
 import ru.practicum.shareit.request.dto.RequestMapper;
 import ru.practicum.shareit.request.model.Request;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
-
 
 import java.util.List;
 import java.util.stream.Collectors;
