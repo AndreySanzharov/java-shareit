@@ -2,15 +2,19 @@ package ru.practicum.shareit.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public final class UserDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserDto {
     @PositiveOrZero
-    private final Integer id;
-    private final String name;
+    private Integer id;
+    private String name;
     @Email
-    private final String email;
+    private String email;
 }

@@ -22,7 +22,7 @@ public class ExceptionController {
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public Map<String, String> hadnleItemAccessException(ItemAccessException exception) {
         return Map.of("error", exception.getMessage());
-}
+    }
 
     @ExceptionHandler(IllegalSearchModeException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

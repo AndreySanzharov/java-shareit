@@ -19,32 +19,32 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoOutput add(@RequestHeader("X-Sharer-User-Id") @NotNull Integer userId,
-                                               @Valid @RequestBody BookingDtoInput bookingDtoInput) {
+                                @Valid @RequestBody BookingDtoInput bookingDtoInput) {
         return bookingService.add(userId, bookingDtoInput);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingDtoOutput setApprove(@PathVariable @NotNull Integer bookingId,
-                                                       @RequestHeader("X-Sharer-User-Id") @NotNull Integer ownerId,
-                                                       @RequestParam("approved") @NotNull Boolean isApproved) {
+                                       @RequestHeader("X-Sharer-User-Id") @NotNull Integer ownerId,
+                                       @RequestParam("approved") @NotNull Boolean isApproved) {
         return bookingService.setApprove(bookingId, ownerId, isApproved);
     }
 
     @GetMapping("/{bookingId}")
     public BookingDtoOutput get(@PathVariable @NotNull Integer bookingId,
-                                                @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
+                                @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
         return bookingService.get(bookingId, userId);
     }
 
     @GetMapping
     public List<BookingDtoOutput> getAll(@RequestParam(name = "state", defaultValue = "ALL", required = false) String searchMode,
-                                                         @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
+                                         @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
         return bookingService.getAll(searchMode, userId);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoOutput> getAllByOwner(@RequestParam(name = "state", defaultValue = "ALL", required = false) String searchMode,
-                                                                @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
+                                                @RequestHeader("X-Sharer-User-Id") @NotNull Integer userId) {
         return bookingService.getAllByOwner(searchMode, userId);
     }
 }
