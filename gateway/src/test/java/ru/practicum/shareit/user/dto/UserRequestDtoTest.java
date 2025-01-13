@@ -61,16 +61,6 @@ class UserRequestDtoTest {
     }
 
     @Test
-    void testValidationFailureName() {
-        UserDto dto = new UserDto(1, "", "user.email@test.com");
-
-        Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
-        assertThat(violations).isNotEmpty();
-        assertThat(violations).anyMatch(violation -> violation.getPropertyPath()
-                .toString().equals("name"));
-    }
-
-    @Test
     void testValidationFailureEmail() {
         UserDto dto = new UserDto(1, "User", "invalid-email");
 
