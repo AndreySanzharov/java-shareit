@@ -34,7 +34,7 @@ class ItemRequestRequestDtoTest {
 
     @Test
     void testSerialization() throws Exception {
-        ItemRequestRequestDto dto = new ItemRequestRequestDto("Description");
+        RequestDto dto = new RequestDto("Description");
 
         String json = objectMapper.writeValueAsString(dto);
 
@@ -45,24 +45,24 @@ class ItemRequestRequestDtoTest {
     void testDeserialization() throws Exception {
         String json = "{\"description\":\"Description\"}";
 
-        ItemRequestRequestDto dto = objectMapper.readValue(json, ItemRequestRequestDto.class);
+        RequestDto dto = objectMapper.readValue(json, RequestDto.class);
 
         assertThat(dto.getDescription()).isEqualTo("Description");
     }
 
     @Test
     void testValidation() {
-        ItemRequestRequestDto dto = new ItemRequestRequestDto("Description");
+        RequestDto dto = new RequestDto("Description");
 
-        Set<ConstraintViolation<ItemRequestRequestDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<RequestDto>> violations = validator.validate(dto);
         assertThat(violations).isEmpty();
     }
 
     @Test
     void testValidationFailureDescription() {
-        ItemRequestRequestDto dto = new ItemRequestRequestDto("");
+        RequestDto dto = new RequestDto("");
 
-        Set<ConstraintViolation<ItemRequestRequestDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<RequestDto>> violations = validator.validate(dto);
         assertThat(violations).isNotEmpty();
         assertThat(violations).anyMatch(violation -> violation.getPropertyPath()
                 .toString().equals("description"));

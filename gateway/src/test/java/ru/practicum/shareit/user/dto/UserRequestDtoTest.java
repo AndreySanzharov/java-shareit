@@ -34,7 +34,7 @@ class UserRequestDtoTest {
 
     @Test
     void testSerialization() throws Exception {
-        UserRequestDto dto = new UserRequestDto("User", "user.email@test.com");
+        UserDto dto = new UserDto(1, "User", "user.email@test.com");
 
         String json = objectMapper.writeValueAsString(dto);
 
@@ -46,7 +46,7 @@ class UserRequestDtoTest {
     void testDeserialization() throws Exception {
         String json = "{\"name\":\"User\",\"email\":\"user.email@test.com\"}";
 
-        UserRequestDto dto = objectMapper.readValue(json, UserRequestDto.class);
+        UserDto dto = objectMapper.readValue(json, UserDto.class);
 
         assertThat(dto.getName()).isEqualTo("User");
         assertThat(dto.getEmail()).isEqualTo("user.email@test.com");
@@ -54,17 +54,17 @@ class UserRequestDtoTest {
 
     @Test
     void testValidation() {
-        UserRequestDto dto = new UserRequestDto("User", "user.email@test.com");
+        UserDto dto = new UserDto(1, "User", "user.email@test.com");
 
-        Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
         assertThat(violations).isEmpty();
     }
 
     @Test
     void testValidationFailureName() {
-        UserRequestDto dto = new UserRequestDto("", "user.email@test.com");
+        UserDto dto = new UserDto(1, "", "user.email@test.com");
 
-        Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
         assertThat(violations).isNotEmpty();
         assertThat(violations).anyMatch(violation -> violation.getPropertyPath()
                 .toString().equals("name"));
@@ -72,9 +72,9 @@ class UserRequestDtoTest {
 
     @Test
     void testValidationFailureEmail() {
-        UserRequestDto dto = new UserRequestDto("User", "invalid-email");
+        UserDto dto = new UserDto(1, "User", "invalid-email");
 
-        Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
         assertThat(violations).isNotEmpty();
         assertThat(violations).anyMatch(violation -> violation.getPropertyPath()
                 .toString().equals("email"));

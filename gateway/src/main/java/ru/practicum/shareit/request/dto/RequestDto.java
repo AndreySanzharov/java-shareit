@@ -10,8 +10,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemRequestRequestDto {
-
+public class RequestDto {
     @NotBlank
     private String description;
 }
